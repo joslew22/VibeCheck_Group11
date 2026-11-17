@@ -1,0 +1,90 @@
+name: Set up VibeCheck backlog
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/setup-backlog.yml'
+permissions:
+  issues: write
+  contents: write
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const data = [{"id": "F1", "name": "Account & Authentication", "owner": "JL", "prio": "Must", "stories": "1.1, 1.2, 1.3, 2.9", "reqs": "R1", "est": 8, "tasks": ["Sign up with email and password (reject duplicate emails, log in after sign-up)", "Log in and out with a persistent session; require login to submit a vibe check", "Password reset by email with a single-use, expiring link", "Guest browsing: map, vibes and filters work without an account"]}, {"id": "F2", "name": "Venue Data Integration", "owner": "DA", "prio": "Must", "stories": "2.1", "reqs": "R3", "est": 2, "tasks": ["Compare Google Places, Yelp Fusion and a seeded list on cost, rate limits and coverage", "Document the decision with a working sample request", "Build venue import/sync into the venues table"]}, {"id": "F3", "name": "Location-based Venue Suggestion", "owner": "TP", "prio": "Must", "stories": "1.4", "reqs": "R2", "est": 3, "tasks": ["Request location permission and read the device position", "Suggest the closest venues; one tap confirms", "Search-by-name fallback when location is unavailable"]}, {"id": "F4", "name": "Tap-to-Tag Vibe Check Form", "owner": "TP", "prio": "Must", "stories": "1.5, 7.3, 7.5, 8.1, 8.3, 8.4, 9.2", "reqs": "R2, R11, R14, R15", "est": 19, "tasks": ["Core tap tags: crowd age, noise, music, energy, wait (no free text)", "Optional tags: comfort, accessibility, cover charge, specials, student discount", "Submit with confirmation; full check in about 15 seconds or less", "Host-labeled vibe checks for event hosts"]}, {"id": "F5", "name": "Interactive Venue Map & Area Search", "owner": "CM", "prio": "Must", "stories": "2.2, 2.10", "reqs": "R3", "est": 6, "tasks": ["Map centered on the user with venue pins", "Location denied: default area plus how-to-enable message", "Search a place or neighborhood and load its venues"]}, {"id": "F6", "name": "Venue Summary Card", "owner": "CM", "prio": "Must", "stories": "2.3, 7.1, 7.4, 7.6", "reqs": "R3, R11, R12, R14", "est": 8, "tasks": ["Summary card on pin tap with venue name and live vibe tags", "Show age policy, comfort, accessibility and cost/deal flags", "Plain noise labels (Quiet / Conversational / Loud) everywhere"]}, {"id": "F7", "name": "Live Vibe Aggregation Engine", "owner": "DA", "prio": "Must", "stories": "2.4", "reqs": "R3", "est": 5, "tasks": ["Query checks inside the cutoff window (e.g. last 90 min), excluding removed checks", "Compute the most common value per tag category", "Update the live vibe when a new check is submitted"]}, {"id": "F8", "name": "Freshness & Confidence Indicators", "owner": "DA", "prio": "Must", "stories": "2.5, 2.6", "reqs": "R4", "est": 4, "tasks": ["Show time since last check and number of checks counted", "Minimum-check threshold shows \"Not enough data\"", "Hide or clearly mark low-data venues when filters are on"]}, {"id": "F9", "name": "Historical Vibe Patterns", "owner": "DA", "prio": "Could", "stories": "2.11, 2.12", "reqs": "R4", "est": 5, "tasks": ["Group past checks by day of week and time block", "Store the most common tag values per group", "Show a labeled \"Usually on Fridays\" fallback when live data is thin"]}, {"id": "F10", "name": "Vibe Filter Engine", "owner": "CM", "prio": "Should", "stories": "2.7, 2.8, 4.3, 7.2, 8.2", "reqs": "R5, R9, R11, R14", "est": 12, "tasks": ["Single-category filters: noise, crowd age, music, wait time", "Combine filters (match all) and clear them in one tap", "Age-policy and cover-charge filters", "One-tap \"Quiet and calm\" preset"]}, {"id": "F11", "name": "Check-in Rate Limiter", "owner": "TP", "prio": "Should", "stories": "1.6", "reqs": "R6", "est": 3, "tasks": ["Store each account's last check-in per venue", "Reject check-ins inside the limit window with a \"try again at\" message", "Tests for limit-window edge cases"]}, {"id": "F12", "name": "Geofence Check-in Verification", "owner": "TP", "prio": "Should", "stories": "3.1", "reqs": "R2, R6", "est": 3, "tasks": ["Compute distance between device and venue", "Reject checks beyond the limit (e.g. 150 m) with an explanation", "Configurable distance and tests"]}, {"id": "F13", "name": "Privacy & Anonymization Layer", "owner": "MB", "prio": "Should", "stories": "3.2", "reqs": "R7", "est": 2, "tasks": ["API returns only aggregated vibe data to other users", "Check-in history visible only to its owner (authorization checks)", "Privacy review of all endpoints"]}, {"id": "F14", "name": "Moderation Queue & Tools", "owner": "MB", "prio": "Should", "stories": "3.3, 3.4, 3.5, 6.4", "reqs": "R6, R17", "est": 12, "tasks": ["Report option with reason pick-list that feeds a moderator queue", "Flag accounts with suspicious check-in patterns", "Remove fake checks and suspend accounts"]}, {"id": "F15", "name": "Admin Venue Management", "owner": "MB", "prio": "Could", "stories": "3.6", "reqs": "R8", "est": 3, "tasks": ["Add-venue form (name, address, category)", "Detect duplicate venues at the same address before saving", "Admin role and route protection"]}, {"id": "F16", "name": "Preference Profile & Match Score", "owner": "JL", "prio": "Could", "stories": "4.1, 4.2", "reqs": "R9", "est": 8, "tasks": ["Save and edit preferred tags on the account", "Match score calculation against a venue's live vibe", "Show \"% match\" only on venues with enough data"]}, {"id": "F17", "name": "Push Notification Service", "owner": "JL", "prio": "Could", "stories": "4.4, 4.5, 4.6, 5.5", "reqs": "R9, R10", "est": 11, "tasks": ["Alert opt-in/out settings (off by default)", "Request push permission and send a test notification", "Nearby match alerts, at most one per venue per night", "Shortlist vibe-change alerts"]}, {"id": "F18", "name": "Group Planning Tools", "owner": "JL", "prio": "Could", "stories": "5.1, 5.2, 5.3, 5.4", "reqs": "R10", "est": 15, "tasks": ["Share-a-vibe link that opens in the app or a browser", "Side-by-side compare of up to 3 venues", "Shortlist that friends vote on without an account", "Group match score from members' saved preferences"]}, {"id": "F19", "name": "Safety Tools", "owner": "CM", "prio": "Could", "stories": "7.8, 7.9", "reqs": "R13", "est": 7, "tasks": ["Share destination with a trusted contact (opt-in each time)", "Manage trusted contacts", "One-tap ride-app link with the venue as pickup"]}, {"id": "F20", "name": "Accessibility Support", "owner": "CM", "prio": "Should", "stories": "7.7", "reqs": "R12", "est": 3, "tasks": ["Screen-reader labels on all controls", "WCAG AA contrast for text and map pins", "Accessibility audit and fixes"]}, {"id": "F21", "name": "Event Hosting Module", "owner": "TP", "prio": "Should", "stories": "9.1, 9.2, 9.3, 9.4", "reqs": "R15", "est": 13, "tasks": ["Create an event listing tied to a venue and time", "Show host vibe checks separately from the crowd vibe", "Event share link for social media", "Post-event vibe by hour for the host"]}, {"id": "F22", "name": "Contributor Profile & Rewards", "owner": "MB", "prio": "Should", "stories": "10.1, 10.2, 10.3, 10.4", "reqs": "R7, R16", "est": 10, "tasks": ["Private check-in history", "Contribution stats (check-ins and views)", "Favorite venues pinned to the top", "Badges and streaks, hideable from profile"]}, {"id": "F23", "name": "Contributor Trust Weighting", "owner": "DA", "prio": "Could", "stories": "10.5", "reqs": "R6, R16", "est": 5, "tasks": ["Agreement-based trust weight calculation (capped)", "Apply weights in the aggregation engine", "Remove weight for suspended accounts"]}, {"id": "F24", "name": "Venue Owner Portal", "owner": "MB", "prio": "Won't", "stories": "6.1, 6.2, 6.3", "reqs": "R17", "est": 13, "tasks": ["Claim a venue page with admin approval", "Owner updates labeled \"from the venue\"", "Owner weekly vibe trends view"]}];
+            const {owner, repo} = context.repo;
+            const sleep = ms => new Promise(r => setTimeout(r, ms));
+            const members = {DA:'Daniel Adewale', TP:'Todd Perkins', CM:'Chase Medy', MB:'Mason Brogden', JL:'Joseph Lewis'};
+            const colors = {DA:'1f6feb', TP:'2da44e', CM:'bf8700', MB:'8250df', JL:'cf222e'};
+            const prioColors = {"Must":'b60205', "Should":'d93f0b', "Could":'fbca04', "Won't":'cccccc'};
+            const labels = [
+              ...Object.entries(members).map(([k,n]) => ({name:k, color:colors[k], description:n})),
+              ...Object.entries(prioColors).map(([k,c]) => ({name:'Priority: '+k, color:c, description:'MoSCoW priority'})),
+              {name:'feature', color:'0e8a16', description:'Feature/function from the RTM'},
+              {name:'task', color:'c5def5', description:'Backlog item under a feature'},
+            ];
+            for (const l of labels) {
+              try { await github.rest.issues.createLabel({owner, repo, ...l}); }
+              catch (e) { if (e.status === 422) await github.rest.issues.updateLabel({owner, repo, name:l.name, color:l.color, description:l.description}); else throw e; }
+            }
+            const existing = await github.paginate(github.rest.issues.listForRepo, {owner, repo, state:'all', per_page:100});
+            const byTitle = new Map(existing.map(i => [i.title, i]));
+            async function ensureIssue(title, body, labels) {
+              if (byTitle.has(title)) return byTitle.get(title);
+              for (let attempt = 0; ; attempt++) {
+                try {
+                  const r = await github.rest.issues.create({owner, repo, title, body, labels});
+                  byTitle.set(title, r.data); await sleep(1500); return r.data;
+                } catch (e) { if (attempt < 4 && (e.status === 403 || e.status === 429)) { core.info('Rate limited, waiting 60s'); await sleep(60000); } else throw e; }
+              }
+            }
+            for (const f of data) {
+              const parentTitle = `${f.id}: ${f.name}`;
+              const body = [
+                `**Owner:** ${f.owner} (${members[f.owner]})`,
+                `**Priority:** ${f.prio}`,
+                `**Estimate:** ${f.est} pts`,
+                `**User stories:** ${f.stories}`,
+                `**Traces to requirements:** ${f.reqs}`,
+                '',
+                'Backlog items are listed as sub-issues below.'
+              ].join('\n');
+              const parent = await ensureIssue(parentTitle, body, ['feature', f.owner, 'Priority: '+f.prio]);
+              let linked = [];
+              try { linked = (await github.request('GET /repos/{owner}/{repo}/issues/{issue_number}/sub_issues', {owner, repo, issue_number: parent.number, per_page:100})).data.map(s => s.id); } catch (e) { core.warning('Could not list sub-issues: '+e.message); }
+              for (let i = 0; i < f.tasks.length; i++) {
+                const t = `${f.id}.${i+1}: ${f.tasks[i]}`;
+                const sub = await ensureIssue(t, `Part of #${parent.number} (${parentTitle}).\n\n**Owner:** ${f.owner} (${members[f.owner]})\n**User stories:** ${f.stories}\n**Traces to:** ${f.reqs}`, ['task', f.owner, 'Priority: '+f.prio]);
+                if (!linked.includes(sub.id)) {
+                  try { await github.request('POST /repos/{owner}/{repo}/issues/{issue_number}/sub_issues', {owner, repo, issue_number: parent.number, sub_issue_id: sub.id}); }
+                  catch (e) { core.warning(`Could not link ${t}: ${e.message}`); }
+                  await sleep(500);
+                }
+              }
+              core.info(`Done ${parentTitle}`);
+            }
+            const readme = `# VibeCheck – Group 11
+
+            VibeCheck is a live "vibe" scoring app for bars and restaurants. It replaces static star ratings with real-time, crowdsourced signals: patrons tap quick tags (crowd age, noise level, music genre, energy, wait time), and those check-ins add up to a live vibe for each venue.
+
+            ## Team
+
+            | Initials | Member |
+            |---|---|
+            ${Object.entries(members).map(([k,n]) => `| ${k} | ${n} |`).join('\n')}
+
+            ## Backlog
+
+            Work is tracked as issues. Each feature from the requirements traceability matrix (F1–F24) is a parent issue labeled \`feature\`, with backlog items as sub-issues labeled \`task\`. Owner initials and MoSCoW priority are labels, and the project board has a view for each team member.
+
+            | Feature | Owner | Priority | Requirements |
+            |---|---|---|---|
+            ${data.map(f => `| ${f.id}: ${f.name} | ${f.owner} | ${f.prio} | ${f.reqs} |`).join('\n')}
+            `;
+            let sha;
+            try { sha = (await github.rest.repos.getContent({owner, repo, path:'README.md'})).data.sha; } catch (e) {}
+            await github.rest.repos.createOrUpdateFileContents({owner, repo, path:'README.md', message:'Add project README with team and backlog', content:Buffer.from(readme).toString('base64'), sha});
+            core.info('Backlog setup complete');
